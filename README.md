@@ -5,7 +5,7 @@ Helper script to be used on the tsuru deploy and start events.
 ## Usage
 To have the deploy-util script deployed with the app image add the following line to the `tsuru.yml` `hooks:build` hook:
 ```
-- curl -L https://gist.github.com/Posytron/c8837b9bbf24dcca83e4aece58aa456a/raw/f6bc3fa0b41be11e449f61bb1f328f177f0400bb/deploy-util.sh -o deploy-util.sh && chmod +x deploy-util.sh
+- curl -L https://github.com/edukorg/deploy-util/raw/master/deploy-util.sh -o deploy-util.sh && chmod +x deploy-util.sh
 ```
 
 To run the default actions for the deploy event (including generate the `APP_EXTRA_ENV` file with the `APP_CURRENT_VERSION`) add the following line:
