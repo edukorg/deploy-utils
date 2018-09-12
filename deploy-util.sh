@@ -3,6 +3,7 @@
 ACTIONS=(\
     show_help \
     generate_app_version_tsuru \
+    get_tsuru_node \
 )
 
 EMAIL='ti@eduk.com.br'
@@ -37,6 +38,19 @@ function generate_app_version_tsuru() {
     fi
 
     echo APP_CURRENT_VERSION=$(($CURRENT_VERSION+1)) >> APP_EXTRA_ENV
+}
+
+function get_tsuru_node() {
+    set -e
+
+    TOKEN=`curl -s --data "email=$EMAIL&password=$PASSWORD" "$TSURU_HOST/auth/login" | sed 's/{"token":"//' | sed 's/"}//'`
+    HOST=$(curl -s -H "Authorization: $TOKEN" "$TSURU_HOST/apps/$TSURU_APPNAME" | jq '.units[] | {(.ID): (.IP)}' | grep -B1 -A1 `hostname` | jq ".[]")
+
+    if [ -z "$HOST" ]; then
+        HOST=xxxx;
+    fi
+
+    echo $HOST;
 }
 
 if [ $# -lt 1 ]; then
