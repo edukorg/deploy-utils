@@ -5,6 +5,7 @@ ACTIONS=(\
     generate_app_version_tsuru \
     get_tsuru_node \
     run_tsuru_app \
+    run_on_tsuru_deploy \
 )
 
 EMAIL='ti@eduk.com.br'
@@ -52,6 +53,12 @@ function get_tsuru_node() {
     fi
 
     echo $HOST;
+}
+
+function run_on_tsuru_deploy() {
+    set -e
+
+    generate_app_version_tsuru
 }
 
 function run_tsuru_app() {
