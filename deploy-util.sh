@@ -4,6 +4,7 @@ ACTIONS=(\
     show_help \
     generate_app_version_tsuru \
     get_tsuru_node \
+    run_tsuru_app \
 )
 
 EMAIL='ti@eduk.com.br'
@@ -51,6 +52,12 @@ function get_tsuru_node() {
     fi
 
     echo $HOST;
+}
+
+function run_tsuru_app() {
+    set -e
+
+    env `cat APP_EXTRA_ENV` TSURU_NODE=`get_tsuru_node` $@
 }
 
 if [ $# -lt 1 ]; then
