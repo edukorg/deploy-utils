@@ -6,6 +6,7 @@ ACTIONS=(\
     get_tsuru_node \
     run_tsuru_app \
     run_on_tsuru_deploy \
+    update_tzdata_if_needed \
 )
 
 EMAIL='ti@eduk.com.br'
@@ -55,9 +56,25 @@ function get_tsuru_node() {
     echo $HOST;
 }
 
+function update_tzdata_if_needed() {
+    set -e
+
+    TZDATA_MIN_VER="2018e"
+    CUSTOM_PACKAGE_ORIGIN="https://s3.amazonaws.com/eduk-packages"
+    CUSTOM_PACKAGE_NAME="tzdata_2018e-eduk02-0ubuntu0.14.04_all.deb"
+
+    CURRENT_TZDATA_VERSION=$(dpkg-query  -W -f='${Version}' tzdata)
+
+    if [[ $CURRENT_VERSION < $TZDATA_MIN_VER ]]; then
+        sudo curl -o /root/$CUSTOM_PACKAGE_NAME -O $CUSTOM_PACKAGE_ORIGIN/$CUSTOM_PACKAGE_NAME
+        sudo dpkg -i /root/$CUSTOM_PACKAGE_NAME
+    fi
+}
+
 function run_on_tsuru_deploy() {
     set -e
 
+    update_tzdata_if_needed
     generate_app_version_tsuru
 }
 
