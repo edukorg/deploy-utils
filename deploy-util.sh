@@ -65,7 +65,7 @@ function update_tzdata_if_needed() {
 
     CURRENT_TZDATA_VERSION=$(dpkg-query  -W -f='${Version}' tzdata)
 
-    if [[ $CURRENT_VERSION < $TZDATA_MIN_VER ]]; then
+    if [[ $CURRENT_TZDATA_VERSION < $TZDATA_MIN_VER ]]; then
         sudo curl -o /root/$CUSTOM_PACKAGE_NAME -O $CUSTOM_PACKAGE_ORIGIN/$CUSTOM_PACKAGE_NAME
         sudo dpkg -i /root/$CUSTOM_PACKAGE_NAME
     fi
