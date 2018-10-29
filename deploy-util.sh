@@ -59,13 +59,29 @@ function get_tsuru_node() {
 function update_tzdata_if_needed() {
     set -e
 
-    TZDATA_MIN_VER="2018e"
-    CUSTOM_PACKAGE_ORIGIN="https://s3.amazonaws.com/eduk-packages"
-    CUSTOM_PACKAGE_NAME="tzdata_2018e-eduk02-0ubuntu0.14.04_all.deb"
+    TZDATA_MIN_VER="2018g"
+    CURRENT_TZDATA_VERSION=$(dpkg-query  -W -f='${Version}' tzdata)
+
+    if [[ $CURRENT_TZDATA_VERSION < $TZDATA_MIN_VER ]]; then
+        echo
+        echo "tzdata is outdated. Trying to upgrade from apt..."
+        echo
+
+        sudo apt-get update
+        sudo apt-get install --only-upgrade tzdata
+        sudo rm -rf /var/lib/apt/lists/*
+    fi
 
     CURRENT_TZDATA_VERSION=$(dpkg-query  -W -f='${Version}' tzdata)
 
     if [[ $CURRENT_TZDATA_VERSION < $TZDATA_MIN_VER ]]; then
+        echo
+        echo "tzdata is still outdated. Using custom package..."
+        echo
+
+        CUSTOM_PACKAGE_ORIGIN="https://s3.amazonaws.com/eduk-packages"
+        CUSTOM_PACKAGE_NAME="tzdata_2018e-eduk02-0ubuntu0.14.04_all.deb"
+
         sudo curl -o /root/$CUSTOM_PACKAGE_NAME -O $CUSTOM_PACKAGE_ORIGIN/$CUSTOM_PACKAGE_NAME
         sudo dpkg -i /root/$CUSTOM_PACKAGE_NAME
     fi
