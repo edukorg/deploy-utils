@@ -1,0 +1,10 @@
+Package: ffmpeg-static
+Architecture: amd64
+Maintainer: Rodolfo Stangherlin
+Depends:
+Priority: optional
+Version: 4.0.2-static
+Description: Copied from https://ffmpeg.org/download.html
+ This only creates symlinks from static ffmpeg binary
+ .
+ This only creates symlinks from static ffmpeg binary

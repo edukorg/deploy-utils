@@ -5,3 +5,5 @@
 # Jetbrains
 .idea/
 
+ffmpeg-static-deb/ffmpeg-static/usr/local/bin/ff*
+ffmpeg-static-deb/ffmpeg-static.deb
