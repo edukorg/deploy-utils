@@ -7,6 +7,7 @@ ACTIONS=(\
     run_tsuru_app \
     run_on_tsuru_deploy \
     update_tzdata_if_needed \
+    set_env_vars_for_process \
 )
 
 EMAIL='ti@eduk.com.br'
@@ -41,6 +42,25 @@ function generate_app_version_tsuru() {
     fi
 
     echo APP_CURRENT_VERSION=$(($CURRENT_VERSION+1)) >> APP_EXTRA_ENV
+}
+
+function set_env_vars_for_process() {
+    set -e
+
+    TOKEN=`curl -s --data "email=$EMAIL&password=$PASSWORD" "$TSURU_HOST/auth/login" | sed 's/{"token":"//' | sed 's/"}//'`
+    PROCESS_NAME=$(curl -s -H "Authorization: $TOKEN" "$TSURU_HOST/apps/$TSURU_APPNAME" | jq '.units[] | {(.ID): (.ProcessName)}' | grep -B1 -A1 `hostname` | jq ".[]" | sed 's/"//g')
+
+    if [ -z "$PROCESS_NAME" ]; then
+      echo "Cannot set env-vars because PROCESS_NAME is not available for `hostname`"
+      return
+    fi
+
+    ENVS_TO_SET=`env | grep -i ^${PROCESS_NAME}__ | cut -d= -f1`
+    for varname in $ENVS_TO_SET; do
+      FINAL_ENV=`echo $varname | sed 's/^[A-Z]*__//'`
+      echo "Setting env-vars to ${PROCESS_NAME} process: ${FINAL_ENV}='${!varname}'"
+      export ${FINAL_ENV}="${!varname}"
+    done
 }
 
 function get_tsuru_node() {
@@ -97,6 +117,7 @@ function run_on_tsuru_deploy() {
 function run_tsuru_app() {
     set -e
 
+    set_env_vars_for_process
     env `cat APP_EXTRA_ENV` TSURU_NODE=`get_tsuru_node` $@
 }
 
