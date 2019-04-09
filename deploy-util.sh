@@ -8,6 +8,7 @@ ACTIONS=(\
     run_on_tsuru_deploy \
     update_tzdata_if_needed \
     set_env_vars_for_process \
+    snitch_deploy \
 )
 
 EMAIL='ti@eduk.com.br'
@@ -29,6 +30,22 @@ function show_help() {
     for action in ${ACTIONS[@]}; do
         echo "  $action"
     done
+}
+
+function snitch_deploy() {
+    set -e
+    curl -sSL https://github.com/lucasgomide/snitch/releases/download/0.4.0/snitch_0.4.0_linux_amd64.tar.gz | tar xz
+    source ./APP_EXTRA_ENV
+    cat > snitch.yml << EOF
+hangouts_chat:
+  webhook_url: \$GOOGLE_CHAT_HOOK_URL
+newrelic:
+  host: https://api.newrelic.com
+  application_id: \$NEW_RELIC_APP_ID
+  api_key: \$NEW_RELIC_API_KEY
+  revision: "$APP_CURRENT_VERSION"
+EOF
+    ./snitch_linux/snitch -c snitch.yml -app-name-contains prd
 }
 
 function generate_app_version_tsuru() {
@@ -112,6 +129,7 @@ function run_on_tsuru_deploy() {
 
     update_tzdata_if_needed
     generate_app_version_tsuru
+    snitch_deploy
 }
 
 function run_tsuru_app() {
