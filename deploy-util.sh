@@ -4,6 +4,7 @@ ACTIONS=(\
     show_help \
     generate_app_version_tsuru \
     get_tsuru_node \
+    replace_templates \
     run_tsuru_app \
     run_on_tsuru_deploy \
     update_tzdata_if_needed \
@@ -137,6 +138,17 @@ function run_tsuru_app() {
 
     set_env_vars_for_process
     env `cat APP_EXTRA_ENV` TSURU_NODE=`get_tsuru_node` $@
+}
+
+function replace_templates() {
+    set -e
+
+    command -v envsubst >/dev/null 2>&1 || print_error_and_exit "Package 'gettext' is not installed"
+
+    for tmpl in $(ls *.template); do
+        output=$(echo $tmpl | sed 's/\.template//')
+        envsubst < $tmpl > $output
+    done
 }
 
 if [ $# -lt 1 ]; then
