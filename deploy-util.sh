@@ -128,7 +128,7 @@ function update_tzdata_if_needed() {
         sudo rm /root/$CUSTOM_PACKAGE_NAME
     fi
 
-    sudo apt --yes --assume-yes --force-yes clean
+    sudo apt-get clean
 }
 
 function run_on_tsuru_deploy() {
