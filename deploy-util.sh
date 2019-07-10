@@ -97,15 +97,19 @@ function update_tzdata_if_needed() {
     set -e
 
     TZDATA_MIN_VER="2018g"
-    CURRENT_TZDATA_VERSION=$(dpkg-query  -W -f='${Version}' tzdata)
+    CURRENT_TZDATA_VERSION=$(dpkg-query -W -f='${Version}' tzdata || echo 0)
+
+    if [ ! -f /etc/localtime ]; then
+        sudo ln -fs /usr/share/zoneinfo/Universal /etc/localtime
+    fi
 
     if [[ $CURRENT_TZDATA_VERSION < $TZDATA_MIN_VER ]]; then
         echo
         echo "tzdata is outdated. Trying to upgrade from apt..."
         echo
 
-        sudo apt-get update
-        sudo apt-get install --only-upgrade tzdata
+        sudo apt --yes --assume-yes --force-yes update
+        sudo DEBIAN_FRONTEND=noninteractive apt --yes --assume-yes --force-yes install tzdata
         sudo rm -rf /var/lib/apt/lists/*
     fi
 
@@ -121,9 +125,10 @@ function update_tzdata_if_needed() {
 
         sudo curl -o /root/$CUSTOM_PACKAGE_NAME -O $CUSTOM_PACKAGE_ORIGIN/$CUSTOM_PACKAGE_NAME
         sudo dpkg -i /root/$CUSTOM_PACKAGE_NAME
+        sudo rm /root/$CUSTOM_PACKAGE_NAME
     fi
 
-    sudo apt clean
+    sudo apt --yes --assume-yes --force-yes clean
 }
 
 function run_on_tsuru_deploy() {
