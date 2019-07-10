@@ -122,6 +122,8 @@ function update_tzdata_if_needed() {
         sudo curl -o /root/$CUSTOM_PACKAGE_NAME -O $CUSTOM_PACKAGE_ORIGIN/$CUSTOM_PACKAGE_NAME
         sudo dpkg -i /root/$CUSTOM_PACKAGE_NAME
     fi
+
+    sudo apt clean
 }
 
 function run_on_tsuru_deploy() {
