@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 ACTIONS=(\
     show_help \
     generate_app_version_tsuru \
