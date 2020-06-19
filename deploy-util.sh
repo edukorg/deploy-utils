@@ -83,7 +83,7 @@ function set_env_vars_for_process() {
 function get_tsuru_node() {
     set -e
 
-    TOKEN=`curl -s --data "email=$EMAIL&password=$PASSWORD" "$TSURU_HOST/auth/login" | sed 's/{"token":"//' | sed 's/"}//'`
+    TOKEN=`curl -s --request POST --data "email=$EMAIL&password=$PASSWORD" "$TSURU_HOST/auth/login" | sed 's/{"token":"//' | sed 's/"}//'`
     HOST=$(curl -s -H "Authorization: $TOKEN" "$TSURU_HOST/apps/$TSURU_APPNAME" | jq '.units[] | {(.ID): (.IP)}' | grep -B1 -A1 `hostname` | jq ".[]")
 
     if [ -z "$HOST" ]; then
