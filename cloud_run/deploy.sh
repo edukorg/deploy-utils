@@ -1,4 +1,8 @@
-deploy () {
+# -----------------------------
+# Cloud Build Deployment
+# -----------------------------
+
+function deploy () {
   tagName=$1
   deleteLocal=$(git tag --list | grep -q "${tagName}$" && echo "true" || echo "false")
   deleteRemote=$(git ls-remote --tags | grep -q "${tagName}$" && echo "true" || echo "false")
@@ -17,7 +21,7 @@ deploy () {
   git push origin $tagName
 }
 
-deploy-stg () {
+function deploy-stg () {
   tagName=$1
   if [[ -z $tagName ]]; then
     tagName=$(whoami)
@@ -25,6 +29,9 @@ deploy-stg () {
 
   deploy "stg-${tagName}"
 }
-deploy-prd () {
-  deploy "prd-${1:-$(date +%s)}"
+
+function deploy-prd () {
+  deploy "prd-${1:-$(date +%FT%TZ)}"
 }
+
+# -----------------------------
