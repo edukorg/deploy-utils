@@ -31,7 +31,7 @@ function deploy-stg () {
 }
 
 function deploy-prd () {
-  deploy "prd-${1:-$(date +%FT%TZ)}"
+  deploy "prd-${1:-$(date +%FT%H.%M.%SZ)}"
 }
 
 # -----------------------------
